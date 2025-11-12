@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portefeuille - {{ sizaine }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Portefeuille de la sizaine {{ sizaine }}</h1>
+
+        <!-- Affichage des valeurs -->
+        <div class="card text-center mt-4">
+            <div class="card-body">
+                <h3>Valeur totale : <span class="text-success">{{ portefeuille['valeur_totale'] }} ₹</span></h3>
+                <h4>Cash disponible : <span class="text-primary">{{ portefeuille['liquidite'] }} ₹</span></h4>
+            </div>
+        </div>
+
+        <!-- Formulaire de modification du cash -->
+        <h2 class="text-center mt-5">Modifier le Cash</h2>
+        <form action="{{ url_for('modifier_cash') }}" method="post" class="mt-3">
+            <input type="hidden" name="sizaine" value="{{ sizaine }}">
+
+            <div class="mb-3">
+                <label for="montant" class="form-label">Montant :</label>
+                <input type="number" name="montant" id="montant" class="form-control" min="1" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="type" class="form-label">Type d'opération :</label>
+                <select name="type" id="type" class="form-control">
+                    <option value="ajouter">Ajouter</option>
+                    <option value="retirer">Retirer</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-warning w-100">Modifier le Cash</button>
+        </form>
+
+        <!-- Tableau des actions possédées -->
+        <h2 class="text-center mt-4">Actions détenues</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Quantité</th>
+                    <th>Valeur unitaire</th>
+                    <th>Valeur totale</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for action, quantite in portefeuille['actions'].items() %}
+                    {% if quantite > 0 %}
+                        <tr>
+                            <td>{{ action }}</td>
+                            <td>{{ quantite }}</td>
+                            <td>{{ prix_actuels[action] }} ₹</td>
+                            <td>{{ quantite * prix_actuels[action] }} ₹</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Formulaire d'achat/vente -->
+        <h2 class="text-center mt-5">Faire une transaction</h2>
+        <form action="{{ url_for('transaction') }}" method="post" class="mt-3">
+            <input type="hidden" name="sizaine" value="{{ sizaine }}">
+
+            <div class="mb-3">
+                <label for="action" class="form-label">Action :</label>
+                <select name="action" id="action" class="form-control">
+                    {% for action in prix_actuels.keys() %}
+                        <option value="{{ action }}">{{ action }} ({{ prix_actuels[action] }} ₹)</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="quantite" class="form-label">Quantité :</label>
+                <input type="number" name="quantite" id="quantite" class="form-control" min="1" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="type" class="form-label">Type de transaction :</label>
+                <select name="type" id="type" class="form-control">
+                    <option value="achat">Achat</option>
+                    <option value="vente">Vente</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Valider la transaction</button>
+        </form>
+
+        <!-- Bouton Retour -->
+        <div class="text-center mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Retour à la Bourse</a>
+        </div>
+    </div>
+</body>
+</html>

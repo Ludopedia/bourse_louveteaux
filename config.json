@@ -1,0 +1,10 @@
+{
+    "sizaines": ["Groupe 1", "Groupe 2", "Groupe 3", "Groupe 4", "Groupe 5"],
+    "capitaux_initiaux": {
+        "Groupe 1": 100,
+        "Groupe 2": 100,
+        "Groupe 3": 100,
+        "Groupe 4": 100,
+        "Groupe 5": 100
+    }
+}
